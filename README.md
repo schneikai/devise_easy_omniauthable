@@ -46,6 +46,16 @@ And that's it. The Login and Register views now show links to sign-in and
 sign-up via Twitter.
 
 
+## Supported providers
+
+* [Twitter](https://dev.twitter.com/apps)
+* [Facebook](https://developers.facebook.com/apps)
+* [Google+](https://cloud.google.com/console)
+* [GitHub](https://github.com/settings/applications)
+
+You are most welcome to add more if you like :)
+
+
 ## Show or hide the password fields
 
 When users sign-up or sign-in via Omniauth (Twitter for example)
