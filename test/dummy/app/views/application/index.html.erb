@@ -1,0 +1,16 @@
+<% if current_user %>
+  <h1>Hi <%= current_user.email %> (<%= current_user.id %>)!</h1>
+  <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+  <%= link_to 'Edit account', edit_user_registration_path %>
+  <%= link_to "Manage authentications", user_authentications_path if defined?(user_authentications_path) %>
+<% else %>
+  <h1>Hi!</h1>
+  <%= link_to "Login", new_user_session_path %>
+  <%= link_to "Register", new_user_registration_path %>
+  <% if User.omniauthable? %>
+    or sign-in via
+    <% User.omniauth_providers.each do |provider| %>
+      <%= link_to "#{provider.to_s.titleize}", main_app.user_omniauth_authorize_path(provider) %>
+    <% end %>
+  <% end %>
+<% end %>

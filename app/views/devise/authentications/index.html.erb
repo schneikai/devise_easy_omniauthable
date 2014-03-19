@@ -1,0 +1,19 @@
+<h1><%= t('devise_easy_omniauthable.index.headline') %></h1>
+
+<table>
+  <tr>
+    <th>Provider</th>
+    <th>Uid</th>
+    <th></th>
+  </tr>
+
+  <% @authentications.each do |authentication| %>
+    <tr>
+      <td><%= authentication.provider %></td>
+      <td><%= authentication.uid %></td>
+      <td><%= link_to 'Destroy', authentication_path(resource_name, authentication), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "Back", :back %>
