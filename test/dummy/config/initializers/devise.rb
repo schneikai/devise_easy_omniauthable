@@ -106,10 +106,10 @@ Devise.setup do |config|
   # config.omniauth :twitter, 'YOUR_APP_ID', 'YOUR_APP_SECRET'
 
   # https://developers.facebook.com/apps
-  # config.omniauth :facebook, 'YOUR_APP_ID', 'YOUR_APP_SECRET'
+  # config.omniauth :facebook, 'YOUR_APP_ID', 'YOUR_APP_SECRET', scope: 'basic_info, email'
 
   # https://cloud.google.com/console
-  # config.omniauth :google_oauth2, 'YOUR_APP_ID', 'YOUR_APP_SECRET'
+  # config.omniauth :google_oauth2, 'YOUR_CLIENT_ID', 'YOUR_CLIENT_SECRET'
 
   # https://github.com/settings/applications
   # config.omniauth :github, 'YOUR_APP_ID', 'YOUR_APP_SECRET', scope: 'user:email'

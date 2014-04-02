@@ -1,13 +1,11 @@
 require 'omniauth-twitter'
 
 module DeviseEasyOmniauthable
-  module OmniauthProviders
-    module Twitter
-      def self.human_name
-        "Twitter"
-      end
-
+  module Providers
+    class Twitter < DeviseEasyOmniauthable::Providers::Base
       def apply_to(resource)
+        # Twitter does not provide email addresses :(
+
         # omni.info.nickname (e.g. kaischneider)
         # omni.info.name (e.g. Kai Schneider)
         # omni.info.location (e.g. Berlin)
@@ -15,8 +13,8 @@ module DeviseEasyOmniauthable
         # omni.info.urls['Twitter'] (e.g. https://twitter.com/kaischneider)
         # omni.info.urls['Website'] (e.g. http://t.co/tjFW27r5iI)
 
-        apply resource, :username, :nickname
-        apply resource, :name, :name
+        copy_attribute resource, [:username, :nickname], omniauth_info.nickname
+        copy_attribute resource, :name, omniauth_info.name
       end
     end
   end

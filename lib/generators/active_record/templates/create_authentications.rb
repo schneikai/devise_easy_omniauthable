@@ -5,7 +5,6 @@ class Create<%= class_name %> < ActiveRecord::Migration
       t.string :authenticatable_type
       t.string :provider
       t.string :uid
-      t.string :uid
       t.string :token
       t.string :token_secret
 

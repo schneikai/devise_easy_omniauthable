@@ -1,32 +1,23 @@
-# Extensions for the devise registrations controller.
-#
-# When a user registers via omniauth provider and vital registration details
-# such as username or email adress are missing from the omniauth response data
-# the user is taken to the registration page where he is asked to provide the
-# missing details.
+# Extensions for the Devise registrations controller.
 
 module DeviseEasyOmniauthable
   module RegistrationsController
     extend ActiveSupport::Concern
 
     included do
-      prepend_after_filter :clear_omniauth, only: [ :create ]
       alias_method_chain :build_resource, :omniauth
     end
 
     protected
-      # Removes omniauth data from the session data.
-      def clear_omniauth
-        session[:omniauth] = nil unless @user.new_record?
-      end
-
-      # When the user is taken to the registration page during oauth signup
-      # to complete or fix his details we need to copy this details from the
-      # auth response to the user model.
+      # Initialize the resource with the additional details from omniauth.
+      # When the user is signing up via omniauth and required information like
+      # for example a email address is missing the omniauth data is saved to the
+      # session and the user is taken back to the registration where the omniauth
+      # data is read back from the session and the user can add the missing details.
       def build_resource_with_omniauth(hash=nil)
         build_resource_without_omniauth hash
-        if session[:omniauth]
-          @user.apply_omniauth(session[:omniauth])
+        if omniauth = session[:omniauth]
+          @user.apply_omniauth(omniauth)
           @user.valid?
         end
       end

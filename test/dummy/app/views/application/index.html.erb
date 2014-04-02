@@ -9,8 +9,8 @@
   <%= link_to "Register", new_user_registration_path %>
   <% if User.omniauthable? %>
     or sign-in via
-    <% User.omniauth_providers.each do |provider| %>
-      <%= link_to "#{provider.to_s.titleize}", main_app.user_omniauth_authorize_path(provider) %>
+    <% User.omniauth_providers(true).each do |provider| %>
+      <%= link_to "#{provider.human_name}", main_app.user_omniauth_authorize_path(provider.identifier) %>
     <% end %>
   <% end %>
 <% end %>

@@ -1,4 +1,4 @@
-# Allow users to delete 3rd party authentifications.
+# Allow users to manage 3rd party authentifications.
 
 class Devise::AuthenticationsController < DeviseController
   prepend_before_filter :authenticate_scope!

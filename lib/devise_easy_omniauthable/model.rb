@@ -13,10 +13,22 @@ module Devise
       end
 
       module ClassMethods
-        # Returns +true+ if omniauth providers are configured and omniauth can be used.
-        # Otherwise +false+.
+        # Returns +true+ if omniauth providers are configured and omniauth can
+        # be used. Otherwise +false+.
         def omniauthable?
-          try(:omniauth_providers) && omniauth_providers.any?
+          omniauth_providers.any?
+        end
+
+        # Returns +array+ of all configured omniauth providers. Returns empty
+        # +array+ if no providers are configured. The original Devise methods
+        # returns a array of symbols. If you want to return the provider classes
+        # set <tt>classes = true</tt>.
+        def omniauth_providers(classes=false)
+          if classes
+            omniauth_providers.map { |p| DeviseEasyOmniauthable::Providers.find_by_name(p) }
+          else
+            defined?(super) ? (super() || []) : []
+          end
         end
       end
 
@@ -26,31 +38,29 @@ module Devise
         self.class.omniauthable?
       end
 
-      # Returns +array+ of all configured omniauth providers. Returns empty array
-      # if no providers are configured.
-      def omniauth_providers
-        self.class.try(:omniauth_providers) || []
+      # Returns +array+ of all configured omniauth providers. Returns empty
+      # +array+ if no providers are configured. The original Devise methods
+      # returns a array of symbols. If you want to return the provider classes
+      # set <tt>classes = true</tt>.
+      def omniauth_providers(classes=false)
+        self.class.omniauth_providers(classes)
       end
 
-      # Checks whether a password is needed or not. For validations only.
-      # Passwords are always required if it's a new record and no authentications
-      # exists, or if the password or confirmation are being set somewhere.
+      # Devise brings a private method <tt>password_required?</tt> that it uses
+      # in validations to check password requirements.
+      # We need to change that a little so that if authentications are present
+      # we don't require a password because the authentication is the password
+      # basically. We also make this method public so we can use it in views
+      # to hide the password fields in forms when authentications are present.
+      #
+      # Remember: When Devise is updating the model it first checks for
+      # <tt>params[:password].blank?</tt> and removes the password if it is blank
+      # only that after it checks if the model is valid. Thats why they can check
+      # for <tt>password.nil?</tt> instead of <tt>password.blank?</tt>.
       def password_required?
-        puts "password_required EasyOmniauthable"
-
-        # Devise checks:
+        # Just as a reference: Devise checks the following:
         # !persisted? || !password.nil? || !password_confirmation.nil?
-
-        # We check:
         (!persisted? && authentications.empty?) || !password.nil? || !password_confirmation.nil?
-
-        # # We need to define when a password is not required and call super
-        # # to allow to evaluate overwritten methods.
-        # if new_record? && authentications.any? && password.blank? && password_confirmation.blank?
-        #   false
-        # else
-        #   super
-        # end
       end
 
       # Returns +true+ if the user has a password. Otherwise +false+.
@@ -61,13 +71,13 @@ module Devise
         encrypted_password.present?
       end
 
-
-
-      # We need to overwrite this devise method to allow users who signed up via
-      # omniauth and don't have a password to update their accounts.
+      # Users with authentications don't have a password. The authentication is
+      # their password. We overwrite this Devise method to make sure they can't
+      # set a password.
+      # Remember: Devise <tt>update_with_password</tt> means update attributes
+      # and password not update model attributes by specifying the current password...
       def update_with_password(params, *options)
-        result = if encrypted_password.blank?
-          # Never allow to change the password.
+        result = unless password?
           params.delete(:password)
           params.delete(:password_confirmation)
           params.delete(:current_password)
@@ -96,9 +106,8 @@ module Devise
           token: omniauth['credentials'].token,
           token_secret: omniauth['credentials'].secret)
 
-        # Assigns omniauth attributes to attributes on the model.
-        # For example "model.username = omni.info.nickname".
-        DeviseEasyOmniauthable::OmniauthInfo.new(omniauth['provider'], omniauth.info).apply_to(self)
+        # Copy omniauth data to attributes on the model.
+        DeviseEasyOmniauthable::Providers.find_by_name(omniauth['provider']).new(omniauth).apply_to(self)
       end
     end
   end
