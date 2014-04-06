@@ -2,7 +2,7 @@ require 'devise'
 require 'devise_easy_omniauthable/devise'
 require 'devise_easy_omniauthable/routes'
 
-# require 'devise_easy_omniauthable/omniauth_info'
+require 'devise_easy_omniauthable/providers/base'
 Dir[File.dirname(__FILE__) + '/devise_easy_omniauthable/providers/*.rb'].each {|file| require file }
 
 module DeviseEasyOmniauthable
