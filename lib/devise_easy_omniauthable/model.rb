@@ -13,6 +13,18 @@ module Devise
       end
 
       module ClassMethods
+        # Finds a user by a omniauth provider and uid. Returns +nil+ if nothing
+        # was found.
+        def find_for_omniauth(provider, uid)
+          DeviseEasyOmniauthable::Authentication.find_by_provider_and_uid(provider, uid).try(:authenticatable)
+        end
+
+        # Finds the first user with the given email address for omniauthentication.
+        # Returns +nil+ if no user was found.
+        def find_for_omniauth_by_email(email)
+          self.find_by_email(email)
+        end
+
         # Returns +true+ if omniauth providers are configured and omniauth can
         # be used. Otherwise +false+.
         def omniauthable?
