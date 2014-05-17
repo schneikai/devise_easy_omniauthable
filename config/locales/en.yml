@@ -8,4 +8,4 @@ en:
       user:
         authentication_destroyed: Authentication was successfully deleted.
     omniauth_callbacks:
-      provide_missing_details: "To complete your registration, please fix the errors below."
+      provide_missing_details: "Almost done. Please fix the errors below to complete your sign up."

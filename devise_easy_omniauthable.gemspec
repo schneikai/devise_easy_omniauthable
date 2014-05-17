@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "devise", "~> 3.0"
 
   s.add_dependency "omniauth-twitter", "~> 1.0"
-  s.add_dependency "twitter", "~> 4.8"
+  s.add_dependency "twitter", "~> 5"
   s.add_dependency "omniauth-facebook", "~> 1.6"
   s.add_dependency "fb_graph", "~> 2.7"
   s.add_dependency "omniauth-google-oauth2", "~> 0.2"
