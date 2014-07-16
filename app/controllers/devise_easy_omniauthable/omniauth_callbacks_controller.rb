@@ -1,4 +1,9 @@
 class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  # Skip :verify_authenticity_token to make sure your session doesn't get reset
+  # when the token verification fails. The OpenID server never sends it.
+  # https://github.com/plataformatec/devise/issues/2432
+  # skip_before_filter :verify_authenticity_token
+
   def twitter
     handle_provider :twitter
   end
@@ -16,12 +21,6 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
   end
 
   protected
-    # The path used after sign up via omniauth. You need to overwrite this
-    # method in your own OmniauthCallbacksController.
-    def after_sign_up_path_for(resource)
-      after_sign_in_path_for(resource)
-    end
-
     # Build a devise resource passing in the session. Useful to move
     # temporary session data to the newly created user.
     def build_resource(hash=nil)
@@ -32,6 +31,12 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
     # OmniauthCallbacksController.
     def sign_up(resource_name, resource)
       sign_in(resource_name, resource)
+    end
+
+    # The path used after sign up via omniauth. You need to overwrite this
+    # method in your own OmniauthCallbacksController.
+    def after_sign_up_path_for(resource)
+      after_sign_in_path_for(resource)
     end
 
     def handle_provider(name)
@@ -66,6 +71,7 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
         resource.skip_confirmation! if resource.respond_to?('skip_confirmation!') # TODO: Make this configurable?
 
         if resource.save
+          resource.reload
           sign_up(resource_name, resource)
           redirect_to after_sign_up_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
         else
