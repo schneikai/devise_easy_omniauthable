@@ -115,7 +115,7 @@ For more information checkout [OmniAuth Facebook](https://github.com/mkdynamic/o
 
 To get your Client-ID and -Secret go to https://cloud.google.com/console.
 Login to your existing Google account or create a new one. Now create a new project.
-When that is done click on "APIs & auth" and then on "Credentials" in the left hand
+When that is done click on "APIs & Auth" and then on "Credentials" in the left hand
 menu. Now click the "Create new client id" button.
 
 If your website is for example `http://www.example.com` you would fill in
@@ -139,6 +139,9 @@ would be `https://www.example.com/account/auth/google_oauth2/callback`.
 If you like to test in local development mode just add `http://localhost:3000` to
 `Authorized JavaScript origins` and `http://localhost:3000/account/auth/google_oauth2/callback`
 to `Authorized redirect URI`.
+
+You also need to enable the Google+ API from under "APIs & Auth > APIs" if it
+isn't already enabled.
 
 The default permissions (aka scope) are to allow access on the users email address
 and profile info. This is just fine for "Sign in with Google".

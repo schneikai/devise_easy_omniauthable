@@ -17,7 +17,7 @@ module DeviseEasyOmniauthable
       ActionController::Base.send :include, DeviseEasyOmniauthable::Controller
     end
 
-    # When the mapping was loaded included via "to_prepare" I was getting
+    # When the mapping was included via "to_prepare" I was getting
     # weired errros on the routes like stack level too deep or routes disappear
     # completely. Trying "after_initialize" now.
     config.after_initialize do

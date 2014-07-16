@@ -28,36 +28,33 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
       resource = resource_class.find_for_omniauth(omni['provider'], omni['uid'])
 
       if resource
-        flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
-        sign_in_and_redirect resource
+        sign_in resource
+        redirect_to after_sign_in_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
 
       elsif user_signed_in?
         current_user.create_or_update_authentication!(omni)
-
-        flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
-        redirect_to after_sign_in_path_for(current_user)
+        redirect_to after_sign_in_path_for(current_user), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
 
       elsif (email = omni['extra']['raw_info'].email).present? && resource = resource_class.find_for_omniauth_by_email(email)
         resource.create_or_update_authentication!(omni)
 
-        flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
-        sign_in_and_redirect resource
+        sign_in resource
+        redirect_to after_sign_in_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
 
       else
         resource = resource_class.new
         resource.apply_omniauth(omni)
 
         if resource.save
-          flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
-          sign_in_and_redirect resource
+          sign_in resource
+          redirect_to after_sign_in_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
         else
           # The user couldn't be created. Most probably the omniauth data
           # didn't have all the required information. Like for example Twitter
           # is not sending email addresses. We need to ask the user to provide
           # the missing details.
           session[:omniauth] = omni.except('extra')
-          flash[:notice] = I18n.t('devise.omniauth_callbacks.provide_missing_details')
-          redirect_to new_user_registration_path
+          redirect_to new_user_registration_path, notice: I18n.t('devise.omniauth_callbacks.provide_missing_details')
         end
       end
     end
