@@ -15,7 +15,13 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
     handle_provider :github
   end
 
-  private
+  protected
+    # The path used after sign up via omniauth. You need to overwrite this
+    # method in your own OmniauthCallbacksController.
+    def after_sign_up_path_for(resource)
+      after_sign_in_path_for(resource)
+    end
+
     def handle_provider(name)
       omni = request.env["omniauth.auth"]
       provider = DeviseEasyOmniauthable::Providers.find_by_name(name)
@@ -44,10 +50,11 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
       else
         resource = resource_class.new
         resource.apply_omniauth(omni)
+        resource.skip_confirmation! # TODO: Make this configurable?
 
         if resource.save
           sign_in resource
-          redirect_to after_sign_in_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
+          redirect_to after_sign_up_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
         else
           # The user couldn't be created. Most probably the omniauth data
           # didn't have all the required information. Like for example Twitter
