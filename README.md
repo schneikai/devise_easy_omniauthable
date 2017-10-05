@@ -227,6 +227,7 @@ You can overwrite this method in your ApplicationController to change that.
 
 ## TODO
 * add tests
+* remember me must be added: https://github.com/plataformatec/devise/wiki/Omniauthable,-sign-out-action-and-rememberable
 * check if this works with multiple Devise models like user and admin. If not, make it work.
 * add more providers (LinkedIn, Xing, ...)
 * when logged in allow the user to add more authorizations

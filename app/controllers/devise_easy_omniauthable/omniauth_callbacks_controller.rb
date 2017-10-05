@@ -1,9 +1,4 @@
 class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  # Skip :verify_authenticity_token to make sure your session doesn't get reset
-  # when the token verification fails. The OpenID server never sends it.
-  # https://github.com/plataformatec/devise/issues/2432
-  # skip_before_filter :verify_authenticity_token
-
   def twitter
     handle_provider :twitter
   end
@@ -71,6 +66,9 @@ class DeviseEasyOmniauthable::OmniauthCallbacksController < Devise::OmniauthCall
         resource.skip_confirmation! if resource.respond_to?('skip_confirmation!') # TODO: Make this configurable?
 
         if resource.save
+          # For some reason we need to reload or the user won't get signed in.
+          # http://stackoverflow.com/questions/24046270/rails-4-devise-sign-inuser-method-not-working-does-not-set-current-user
+          # http://stackoverflow.com/questions/10880336/rails-devise-sign-in-doesnt-work-on-redirect
           resource.reload
           sign_up(resource_name, resource)
           redirect_to after_sign_up_path_for(resource), notice: I18n.t('devise.omniauth_callbacks.success', kind: provider.human_name)
